@@ -1,0 +1,6 @@
+{
+  "name": "Singapore SORA Loan & Interest Calculator",
+  "description": "Accurate Singapore Overnight Rate Average (SORA) mortgage and interest calculation engine using MAS ACT/365 compounding conventions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
