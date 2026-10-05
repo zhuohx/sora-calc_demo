@@ -263,6 +263,26 @@ export async function fetchMasRates(customApiUrl?: string): Promise<{
       }
     }
 
+    // Direct records array from /api/sora endpoint
+    if (json?.records && Array.isArray(json.records)) {
+      const parsed: DailySoraRate[] = json.records
+        .map((item: any) => ({
+          date: item.date || item.end_of_day,
+          rate: Number(item.rate || item.sora),
+          volumeSgdMillion: item.volumeSgdMillion ? Number(item.volumeSgdMillion) : undefined
+        }))
+        .filter((item: any) => item.date && !isNaN(item.rate));
+
+      if (parsed.length > 0) {
+        return {
+          success: true,
+          data: parsed,
+          source: json.source === 'mas_live_gateway' ? 'mas_live' : 'custom_api',
+          message: `Successfully loaded ${parsed.length} rates from serverless API.`
+        };
+      }
+    }
+
     // Direct JSON array from user backend
     if (Array.isArray(json)) {
       const parsed = json

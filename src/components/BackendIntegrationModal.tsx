@@ -132,24 +132,52 @@ async def get_sora_rates():
 
         {/* Modal Content */}
         <div className="p-5 overflow-y-auto space-y-6 text-xs text-slate-300">
+          {/* Serverless Connection Status */}
+          <div className="bg-[#121C33] border border-emerald-800/40 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-emerald-300 flex items-center gap-1.5">
+                <Server className="w-4 h-4 text-emerald-400" />
+                Active Serverless Connection (/api/sora & /api/health)
+              </span>
+              <span className="text-[10px] text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded font-mono border border-emerald-800">
+                Installed in /api/
+              </span>
+            </div>
+
+            <p className="text-[11px] text-slate-300">
+              The application provides two serverless functions located at the project root <code className="font-mono text-emerald-300">/api/health.ts</code> and <code className="font-mono text-emerald-300">/api/sora.ts</code>. These endpoints securely relay requests to the official MAS Domestic Interest Rates Gateway using your <code className="font-mono text-cyan-300">KeyId</code> header.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] font-mono">
+              <div className="bg-[#080D1A] p-2 rounded border border-slate-800">
+                <span className="text-slate-400 block text-[10px]">HEALTH PROBE</span>
+                <span className="text-slate-200">GET /api/health</span>
+              </div>
+              <div className="bg-[#080D1A] p-2 rounded border border-slate-800">
+                <span className="text-slate-400 block text-[10px]">DAILY SORA & COMPOUNDED</span>
+                <span className="text-emerald-400">GET /api/sora</span>
+              </div>
+            </div>
+          </div>
+
           {/* Custom Endpoint Configuration */}
           <div className="bg-[#121C33] border border-slate-800 rounded-xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-white flex items-center gap-1.5">
                 <Globe className="w-4 h-4 text-emerald-400" />
-                Custom Backend Endpoint URL
+                Test API Endpoint URL
               </span>
               <span className="text-[10px] text-slate-400 font-mono">
-                {customApiUrl ? 'Connected' : 'Defaulting to embedded verified MAS data'}
+                {customApiUrl || '/api/sora (default)'}
               </span>
             </div>
 
             <div className="flex gap-2">
               <input
-                type="url"
+                type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="https://your-api.com/api/sora/rates (or /api/mas/sora)"
+                placeholder="/api/sora (or custom external URL)"
                 className="flex-1 bg-[#080D1A] border border-slate-700 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-cyan-500"
               />
               <button
@@ -173,27 +201,25 @@ async def get_sora_rates():
                 <span className="font-mono">{testResult.message}</span>
               </div>
             )}
-
-            <div className="text-[11px] text-slate-400">
-              When your backend is ready, enter its URL above. The frontend automatically parses both raw JSON arrays <code className="font-mono text-emerald-300">{'[{ date, rate, volumeSgdMillion }]'}</code> and standard MAS DataStore responses <code className="font-mono text-emerald-300">{'{"result": {"records": [...]}}'}</code>.
-            </div>
           </div>
 
-          {/* Official MAS API Details */}
+          {/* Official MAS API Gateway Details */}
           <div className="bg-[#121C33]/50 border border-slate-800 rounded-xl p-4 space-y-2">
-            <div className="font-semibold text-slate-200">Official MAS SORA DataStore Resource ID</div>
-            <div className="flex items-center justify-between bg-[#080D1A] p-2.5 rounded border border-slate-800 font-mono text-[11px] text-emerald-400">
-              <span>9a0bf149-308d-4bd4-aec6-322144e6021b</span>
-              <button
-                onClick={() => handleCopy('9a0bf149-308d-4bd4-aec6-322144e6021b', 'res-id')}
-                className="text-slate-400 hover:text-white"
-              >
-                {copiedSnippet === 'res-id' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-              </button>
+            <div className="font-semibold text-slate-200">MAS Gateway Endpoint & Header Requirement</div>
+            <div className="bg-[#080D1A] p-2.5 rounded border border-slate-800 font-mono text-[11px] text-slate-300 space-y-1.5">
+              <div>
+                <span className="text-slate-500">TARGET: </span>
+                <span className="text-cyan-300 break-all">https://eservices.mas.gov.sg/apimg-gw/server/monthly_statistical_bulletin_non610mssql/domestic_interest_rates_daily/views/domestic_interest_rates_daily</span>
+              </div>
+              <div>
+                <span className="text-slate-500">HEADER: </span>
+                <span className="text-emerald-400">KeyId: &lt;MAS_KEY_ID&gt;</span>
+              </div>
+              <div>
+                <span className="text-slate-500">ENV VAR: </span>
+                <span className="text-amber-300">MAS_KEY_ID</span> in <code className="text-slate-300">.env</code> (No hardcoded keys)
+              </div>
             </div>
-            <p className="text-[11px] text-slate-400">
-              MAS publishes SORA daily on every Singapore business day by 9:00 AM SGT reflecting the prior business day's interbank unsecured SGD transactions.
-            </p>
           </div>
 
           {/* Backend Code Snippets */}
